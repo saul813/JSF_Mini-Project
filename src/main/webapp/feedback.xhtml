@@ -3,31 +3,37 @@
       xmlns:h="jakarta.faces.html">
 <h:head>
     <title>Customer Feedback Application</title>
+    <h:outputStylesheet library="css" name="style.css" />
 </h:head>
-<h:body style="font-family: Arial, sans-serif; margin: 40px;">
+<h:body>
 
-    <h2>Submit Customer Feedback</h2>
+    <div class="card">
+        <h2>Submit Feedback</h2>
 
-    <h:form>
-        <h:panelGrid columns="2" cellpadding="5">
-            <h:outputLabel for="name" value="Your Name: " />
-            <h:inputText id="name" value="#{feedbackBean.customerName}" required="true" />
+        <h:form>
+            <div class="form-group">
+                <h:outputLabel for="name" value="Your Name:" style="font-weight:bold;" />
+                <h:inputText id="name" value="#{feedbackBean.customerName}" required="true" styleClass="form-control" />
+            </div>
 
-            <h:outputLabel for="comments" value="Comments: " />
-            <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" cols="30" />
+            <div class="form-group">
+                <h:outputLabel for="comments" value="Comments:" style="font-weight:bold;" />
+                <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" styleClass="form-control" />
+            </div>
 
-            <h:panelGroup />
-            <h:commandButton value="Submit Feedback" action="#{feedbackBean.processFeedback()}" />
-        </h:panelGrid>
-    </h:form>
+            <div style="margin-top: 25px; display: flex; gap: 10px; justify-content: center;">
+                <h:commandButton value="Submit Form" action="#{feedbackBean.processFeedback()}" styleClass="btn-primary" />
+                <!-- Back navigation action linked directly inside the view template tree -->
+                <h:button value="Back Home" outcome="index" style="background-color:#6c757d;" styleClass="btn-primary" />
+            </div>
+        </h:form>
 
-    <hr style="margin-top: 20px; margin-bottom: 20px;" />
-
-    <h:panelGroup rendered="#{not empty feedbackBean.responseMessage}">
-        <div style="background-color: #e6f4ea; color: #137333; padding: 15px; border-radius: 4px; display: inline-block;">
-            <h:outputText value="#{feedbackBean.responseMessage}" />
-        </div>
-    </h:panelGroup>
+        <h:panelGroup rendered="#{not empty feedbackBean.responseMessage}">
+            <div style="margin-top: 20px; background-color: #e6f4ea; color: #137333; padding: 15px; border-radius: 6px; text-align: left; font-size: 14px;">
+                <h:outputText value="#{feedbackBean.responseMessage}" />
+            </div>
+        </h:panelGroup>
+    </div>
 
 </h:body>
 </html>
