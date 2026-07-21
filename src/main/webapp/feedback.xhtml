@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://w3.org"
+      xmlns:h="jakarta.faces.html">
+<h:head>
+    <title>Customer Feedback Application</title>
+</h:head>
+<h:body style="font-family: Arial, sans-serif; margin: 40px;">
+
+    <h2>Submit Customer Feedback</h2>
+
+    <h:form>
+        <h:panelGrid columns="2" cellpadding="5">
+            <h:outputLabel for="name" value="Your Name: " />
+            <h:inputText id="name" value="#{feedbackBean.customerName}" required="true" />
+
+            <h:outputLabel for="comments" value="Comments: " />
+            <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" cols="30" />
+
+            <h:panelGroup />
+            <h:commandButton value="Submit Feedback" action="#{feedbackBean.processFeedback()}" />
+        </h:panelGrid>
+    </h:form>
+
+    <hr style="margin-top: 20px; margin-bottom: 20px;" />
+
+    <h:panelGroup rendered="#{not empty feedbackBean.responseMessage}">
+        <div style="background-color: #e6f4ea; color: #137333; padding: 15px; border-radius: 4px; display: inline-block;">
+            <h:outputText value="#{feedbackBean.responseMessage}" />
+        </div>
+    </h:panelGroup>
+
+</h:body>
+</html>
