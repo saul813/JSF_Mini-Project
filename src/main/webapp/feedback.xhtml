@@ -2,55 +2,75 @@
 <html xmlns="http://w3.org"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
-      xmlns:p="http://primefaces.org">
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <title>Customer Feedback Application</title>
-    <h:outputStylesheet library="css" name="style.css" />
+    <title>Enterprise Feedback System</title>
 </h:head>
-<h:body>
+<h:body style="background-color: #f4f7f6; padding: 40px; display: flex; justify-content: center; align-items: center; min-height: 80vh;">
 
-    <div class="card">
-        <h2>Submit Feedback (with AJAX)</h2>
+    <!-- PrimeFaces Card Component Container -->
+    <p:card style="width: 450px; padding: 10px;">
+        <f:facet name="title">
+            Enterprise Feedback Portal
+        </f:facet>
+        <f:facet name="subtitle">
+            We value your insights and application performance telemetry
+        </f:facet>
 
-        <h:form id="feedbackForm"> <!-- Added explicit ID for targeted renders -->
+        <h:form id="feedbackForm">
+            <!-- Global messaging panel for instant error alert blocks -->
+            <p:messages id="messages" closable="true">
+                <p:autoUpdate />
+            </p:messages>
 
-            <div class="form-group">
-                <h:outputLabel for="name" value="Your Name:" style="font-weight:bold;" />
-                <h:inputText id="name" value="#{feedbackBean.customerName}" required="true" styleClass="form-control">
+            <!-- Name Input Field Row Setup -->
+            <div style="margin-bottom: 15px;">
+                <p:outputLabel for="name" value="Your Name" style="display:block; margin-bottom:5px; font-weight:bold;" />
+
+                <!-- Notice: No self-closing slash at the end of this open line -->
+                <p:inputText id="name" value="#{feedbackBean.customerName}" required="true" style="width:100%">
+                    <!-- These live strictly inside the inputText component -->
                     <f:validateLength minimum="3" maximum="30" />
-                    <!-- INSTANT VALIDATION: Triggers when the user changes focus ('blur' event) -->
-                    <f:ajax event="blur" execute="@this" render="nameMessage" />
-                </h:inputText>
-                <!-- Target ID for the name validation error message -->
-                <h:message id="nameMessage" for="name" style="color: red; font-size: 12px; display: block;" />
+                    <p:ajax event="blur" update="messages" />
+                </p:inputText> <!-- Completely closed here -->
             </div>
 
-            <div class="form-group">
-                <h:outputLabel for="comments" value="Comments:" style="font-weight:bold;" />
-                <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" styleClass="form-control">
+            <!-- Comments Input Field Row Setup -->
+            <div style="margin-bottom: 20px;">
+                <p:outputLabel for="comments" value="Comments" style="display:block; margin-bottom:5px; font-weight:bold;" />
+
+                <!-- Notice: No self-closing slash at the end of this open line -->
+                <p:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" style="width:100%"
+                                 counter="display" maxlength="150" counterTemplate="{0} characters remaining.">
+                    <!-- This lives strictly inside the inputTextarea component -->
                     <f:validator validatorId="noSpamValidator" />
-                </h:inputTextarea>
-                <h:message id="commentsMessage" for="comments" style="color: red; font-size: 12px; display: block;" />
+                </p:inputTextarea> <!-- Completely closed here -->
+
+                <h:outputText id="display" style="font-size:12px; color:#666;" />
             </div>
 
-            <div style="margin-top: 25px; display: flex; gap: 10px; justify-content: center;">
-                <h:commandButton value="Submit Form" action="#{feedbackBean.processFeedback()}" styleClass="btn-primary">
-                    <!-- SUBMIT VIA AJAX: Process everything in the form, and redraw both error fields and the message panel group -->
-                    <f:ajax execute="@form" render="nameMessage commentsMessage responseGroup" />
-                </h:commandButton>
-                <h:button value="Back Home" outcome="index" style="background-color:#6c757d;" styleClass="btn-primary" />
+            <!-- Action Command Buttons -->
+            <div style="display: flex; gap: 10px; justify-content: flex-start;">
+                <p:commandButton value="Submit Feedback"
+                                 action="#{feedbackBean.processFeedback()}"
+                                 process="@form"
+                                 update="responsePanel"
+                                 icon="pi pi-check" />
+
+                <p:button value="Back Home"
+                          outcome="index"
+                          icon="pi pi-home"
+                          styleClass="ui-button-secondary" />
             </div>
         </h:form>
 
-        <!-- Wrapped in a panelGroup with an ID so AJAX can easily target it -->
-        <h:panelGroup id="responseGroup">
+        <!-- Response Display Panel Group -->
+        <h:panelGroup id="responsePanel">
             <h:panelGroup rendered="#{not empty feedbackBean.responseMessage}">
-                <div style="margin-top: 20px; background-color: #e6f4ea; color: #137333; padding: 15px; border-radius: 6px; text-align: left; font-size: 14px;">
-                    <h:outputText value="#{feedbackBean.responseMessage}" />
-                </div>
+                <p:staticMessage severity="info" summary="SUCCESS" detail="#{feedbackBean.responseMessage}" style="width: 100%; margin-top: 20px;"/>
             </h:panelGroup>
         </h:panelGroup>
-    </div>
+    </p:card>
 
 </h:body>
 </html>
