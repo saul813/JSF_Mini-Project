@@ -24,9 +24,14 @@
 
 
             <div class="form-group">
-                <h:outputLabel for="comments" value="Comments:" style="font-weight:bold;" />
-                <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" styleClass="form-control" />
+                <h:outputLabel for="comments" value="Comments:" />
+                <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4">
+                    <!-- Attach your custom validator by its registered name registration ID string -->
+                    <f:validator validatorId="noSpamValidator" />
+                </h:inputTextarea>
+                <h:message for="comments" style="color: red; font-size: 12px; display: block;" />
             </div>
+
 
             <div style="margin-top: 25px; display: flex; gap: 10px; justify-content: center;">
                 <h:commandButton value="Submit Form" action="#{feedbackBean.processFeedback()}" styleClass="btn-primary" />
