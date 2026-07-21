@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://w3.org"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core">
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org">
 <h:head>
     <title>Customer Feedback Application</title>
     <h:outputStylesheet library="css" name="style.css" />
@@ -9,41 +10,45 @@
 <h:body>
 
     <div class="card">
-        <h2>Submit Feedback</h2>
+        <h2>Submit Feedback (with AJAX)</h2>
 
-        <h:form>
+        <h:form id="feedbackForm"> <!-- Added explicit ID for targeted renders -->
+
             <div class="form-group">
-                <h:outputLabel for="name" value="Your Name:" />
-                <h:inputText id="name" value="#{feedbackBean.customerName}" required="true">
-                    <!-- Enforce a character minimum -->
+                <h:outputLabel for="name" value="Your Name:" style="font-weight:bold;" />
+                <h:inputText id="name" value="#{feedbackBean.customerName}" required="true" styleClass="form-control">
                     <f:validateLength minimum="3" maximum="30" />
+                    <!-- INSTANT VALIDATION: Triggers when the user changes focus ('blur' event) -->
+                    <f:ajax event="blur" execute="@this" render="nameMessage" />
                 </h:inputText>
-                <!-- Renders the validation error message specifically for this input -->
-                <h:message for="name" style="color: red; font-size: 12px; display: block;" />
+                <!-- Target ID for the name validation error message -->
+                <h:message id="nameMessage" for="name" style="color: red; font-size: 12px; display: block;" />
             </div>
 
-
             <div class="form-group">
-                <h:outputLabel for="comments" value="Comments:" />
-                <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4">
-                    <!-- Attach your custom validator by its registered name registration ID string -->
+                <h:outputLabel for="comments" value="Comments:" style="font-weight:bold;" />
+                <h:inputTextarea id="comments" value="#{feedbackBean.comments}" rows="4" styleClass="form-control">
                     <f:validator validatorId="noSpamValidator" />
                 </h:inputTextarea>
-                <h:message for="comments" style="color: red; font-size: 12px; display: block;" />
+                <h:message id="commentsMessage" for="comments" style="color: red; font-size: 12px; display: block;" />
             </div>
 
-
             <div style="margin-top: 25px; display: flex; gap: 10px; justify-content: center;">
-                <h:commandButton value="Submit Form" action="#{feedbackBean.processFeedback()}" styleClass="btn-primary" />
-                <!-- Back navigation action linked directly inside the view template tree -->
+                <h:commandButton value="Submit Form" action="#{feedbackBean.processFeedback()}" styleClass="btn-primary">
+                    <!-- SUBMIT VIA AJAX: Process everything in the form, and redraw both error fields and the message panel group -->
+                    <f:ajax execute="@form" render="nameMessage commentsMessage responseGroup" />
+                </h:commandButton>
                 <h:button value="Back Home" outcome="index" style="background-color:#6c757d;" styleClass="btn-primary" />
             </div>
         </h:form>
 
-        <h:panelGroup rendered="#{not empty feedbackBean.responseMessage}">
-            <div style="margin-top: 20px; background-color: #e6f4ea; color: #137333; padding: 15px; border-radius: 6px; text-align: left; font-size: 14px;">
-                <h:outputText value="#{feedbackBean.responseMessage}" />
-            </div>
+        <!-- Wrapped in a panelGroup with an ID so AJAX can easily target it -->
+        <h:panelGroup id="responseGroup">
+            <h:panelGroup rendered="#{not empty feedbackBean.responseMessage}">
+                <div style="margin-top: 20px; background-color: #e6f4ea; color: #137333; padding: 15px; border-radius: 6px; text-align: left; font-size: 14px;">
+                    <h:outputText value="#{feedbackBean.responseMessage}" />
+                </div>
+            </h:panelGroup>
         </h:panelGroup>
     </div>
 
